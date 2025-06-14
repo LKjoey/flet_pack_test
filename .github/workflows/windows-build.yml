@@ -1,7 +1,6 @@
 name: Windows Build
 
 on:
-  # 手动触发 打包
   workflow_dispatch:
 
 env:
