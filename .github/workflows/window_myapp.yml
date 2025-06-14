@@ -1,19 +1,59 @@
-name: 画爱心Windows版
+name: 计算器
 
 on:
+  # Runs on push to any of the below branches
+  push:
+    branches:
+      - main
+
+  # Runs on pull request events that target one of the below branches
+  pull_request:
+    branches:
+      - main
+      
   workflow_dispatch:
 
-permissions:
-  contents: read
+  permissions:
+    contents: read
 
+env:
+  # https://flet.dev/docs/publish#versioning
+  BUILD_NUMBER: 1
+  BUILD_VERSION: 1.0.0
+
+  # Python version to use
+  PYTHON_VERSION: 3.12.8
+
+  # flet-cli version to install for `flet build`
+  FLET_CLI_VERSION: 0.28.2
+
+  # Ensures Python uses UTF-8 encoding by default
+  PYTHONUTF8: 1
+
+  # Disables rich text formatting in Flet CLI output
+  FLET_CLI_NO_RICH_OUTPUT: 1
+
+  # Disables progress bars when using UV
+  UV_NO_PROGRESS: 1
+  
 jobs:
-  pyinstaller-build:
+  build:
     runs-on: windows-latest
     steps:
-      - name: Create Executable
-        uses: sayyid5416/pyinstaller@v1
-        with:
-          python_ver: '3.12'
-          spec: 'love_heart.py'
-          upload_exe_with_name: 'love_heart'
-          options: --onefile, --name "love_heart", --windowed, 
+      - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install flet-cli ${{ env.FLET_CLI_VERSION }}
+      run: |
+        python -m pip install --upgrade pip
+        pip install flet-cli==$env:FLET_CLI_VERSION
+
+    - name: Flet Build Windows
+      run: |
+        flet build windows --verbose --no-rich-output --build-number=$env:BUILD_NUMBER --build-version=$env:BUILD_VERSION
+
