@@ -51,6 +51,9 @@ jobs:
       with:
         name: windows-build-artifact
         path: build/windows
-        spec:''
+        spec: 'src/main.py'
+        unload_exe_with_name: 'computer'
+        options: --onefile, --name 'computer', --windowed
         if-no-files-found: error
         overwrite: false
+        
